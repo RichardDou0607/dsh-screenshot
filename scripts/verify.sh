@@ -21,7 +21,7 @@ done
 
 printf '\n== 2. 剖面补丁层 ==\n'
 if [ -f "$PATCH" ]; then
-  if grep -qF "$MARK" "$PATCH"; then ok "已挂载（${PATCH}）"; else bad "补丁层中没有 dsh-screenshot 块，先运行 scripts/mount.sh"; fi
+  if grep -qF "$MARK" "$PATCH"; then ok "已按脚本方式挂载（${PATCH}）"; else info "补丁层没有脚本挂载的条目（可能未安装，或由「设置 → 插件」管理）"; fi
   info "条目 id：$(grep -A2 -F "$MARK" "$PATCH" | grep 'id:' | tr -d ' ')"
 else
   bad "找不到 ${PATCH}"
@@ -33,7 +33,7 @@ if [ -f "$HEARTBEAT_LOCAL" ]; then
 elif [ -f "$HEARTBEAT_HOME" ]; then
   ok "宿主半份已加载：$(tr -d '\n' < "${HEARTBEAT_HOME}")"
 else
-  bad "没有心跳：宿主半份未激活。用新的条目 id 重新挂载（scripts/mount.sh），或 Cmd+Q 重启应用"
+  info "没有心跳：当前未挂载（若已用「设置 → 插件」安装，请以那里的状态为准）"
 fi
 
 printf '\n== 4. 在线路由 ==\n'
@@ -46,8 +46,8 @@ fi
 
 printf '\n== 5. 单元测试 ==\n'
 if command -v node >/dev/null 2>&1; then
-  if node --test "$ROOT/tests/loader-sim.test.mjs" "$ROOT/tests/host-route.test.mjs" > /tmp/dsh-screenshot-tests.log 2>&1; then
-    ok "测试通过：$(grep -c '^✔' /tmp/dsh-screenshot-tests.log) 项"
+  if node --test "$ROOT/tests/loader-sim.test.mjs" "$ROOT/tests/host-route.test.mjs" "$ROOT/tests/patch-entry.test.mjs" > /tmp/dsh-screenshot-tests.log 2>&1; then
+    ok "测试通过：$(grep -c '^✔' /tmp/dsh-screenshot-tests.log) 项（客户端/宿主/补丁编辑）"
   else
     bad "测试失败，详见 /tmp/dsh-screenshot-tests.log"
   fi

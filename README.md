@@ -27,7 +27,8 @@
     │   ├── lib/client.js                浏览器半份：菜单贡献 + 捕获管线 + 裁剪层 + 注入输入框
     │   └── README.md                    详细说明书（安装、使用、权限、排障、路由契约）
     ├── scripts/
-    │   ├── mount.sh / unmount.sh        写入/移除 profile 补丁层条目（幂等 + 自动备份）
+    │   ├── patch-entry.mjs             补丁层精确编辑（mount/unmount/status）
+    │   ├── mount.sh / unmount.sh       上面脚本的薄封装
     │   ├── verify.sh                    一键自检（文件、挂载、心跳、在线路由、38 项测试）
     │   └── verify-host-resolution.mjs   复核宿主扫描前置条件
     ├── tests/
@@ -52,7 +53,11 @@
 ### 方式 B：手动挂载（不经过插件管理器）
 
     bash scripts/mount.sh      # 备份并写入 ~/.dsh/profiles/desktop/cordis.patch.yml（幂等）
-    bash scripts/unmount.sh    # 移除该条目
+    bash scripts/unmount.sh    # 只移除本插件自己的条目，其他内容原样保留
+    node scripts/patch-entry.mjs status   # 查看当前是否挂载
+
+脚本按行范围**精确匹配**（只认 `- insert:` 里 name 指向本插件 entry.js 的块），
+不会像"标记块整块删除"那样误删别人落在标记之间的条目。
 
 两种方式**不要同时使用**（会对同一个插件挂载两次）。方式 B 适合不想让插件进入 profile 依赖表的场景。
 
