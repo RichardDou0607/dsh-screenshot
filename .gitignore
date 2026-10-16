@@ -1,0 +1,16 @@
+# 运行时产物
+plugins/dsh-screenshot/.host-loaded.json
+.host-loaded.json
+
+# macOS
+.DS_Store
+
+# 个人工作日志（含本机调试记录，不入库）
+开发规划.md
+
+# 备份与临时文件
+*.bak-*
+*.log
+
+# 依赖目录（本插件零依赖，保留以防后续引入）
+node_modules/
