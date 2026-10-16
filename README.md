@@ -50,6 +50,24 @@
 
     bash scripts/unmount.sh
 
+## 网络与加速（可选）
+
+插件本身不联网。只有在克隆/推送本仓库、或 Harness 内使用 GitHub 相关能力时，才可能需要网络加速。
+
+Watt Toolkit（原 Steam++）的 GitHub 加速采用「hosts 指向 127.0.0.1 + 本地 80/443 反代」，
+**不是 HTTP 代理模式**，因此不需要给 git 配置 http.proxy，直连即可走加速：
+
+    git ls-remote origin          # 加速开启后应当立即返回
+
+反过来，若曾为 GitHub 配过 HTTP 代理（例如 Clash 的 127.0.0.1:7897），该配置会让 git **绕开** hosts 加速，
+代理没开时直接失败，建议移除：
+
+    git config --global --unset http.https://github.com/.proxy
+    git config --global --unset http.https://gist.github.com/.proxy
+
+另外注意：Node 不读取 macOS 钥匙串的根证书，在 hosts 劫持下 Node 发起的抓取可能报
+证书错误（UNABLE_TO_VERIFY_LEAF_SIGNATURE），可用 NODE_EXTRA_CA_CERTS 指向加速工具的根证书解决。
+
 ## 实现要点
 
 - **加号菜单**是 Harness 的斜杠命令菜单，客户端插件用 ctx.commandUi.register({ name, label, icon, available, ui: { kind: "action", run } }) 就能加条目。
