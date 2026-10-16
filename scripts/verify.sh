@@ -14,7 +14,8 @@ bad() { printf '  [FAIL] %s\n' "$1"; }
 info() { printf '  [INFO] %s\n' "$1"; }
 
 printf '\n== 1. 插件文件 ==\n'
-for f in package.json lib/entry.js lib/index.js lib/client.js; do
+if [ -f "$ROOT/package.json" ]; then ok "package.json（仓库根 = 插件包清单）"; else bad "package.json 缺失"; fi
+for f in lib/entry.js lib/index.js lib/client.js; do
   if [ -f "$PLUGIN/$f" ]; then ok "$f"; else bad "$f 缺失"; fi
 done
 

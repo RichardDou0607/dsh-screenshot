@@ -2,12 +2,12 @@
   "name": "dsh-screenshot",
   "version": "0.1.0",
   "private": true,
-  "description": "点击会话输入框「+」菜单中的「截图」，截取屏幕（可选区域裁剪）后图片直接进入会话输入框。DeepSeek Harness 双半份插件。",
+  "description": "DeepSeek Harness 截图插件：点击输入框「＋」选截图，框选后图片直接进入会话输入框（含隐藏本窗口）。",
   "type": "module",
-  "main": "lib/index.js",
+  "main": "plugins/dsh-screenshot/lib/entry.js",
   "exports": {
-    ".": "./lib/index.js",
-    "./client": "./lib/client.js",
+    ".": "./plugins/dsh-screenshot/lib/entry.js",
+    "./client": "./plugins/dsh-screenshot/lib/client.js",
     "./package.json": "./package.json"
   },
   "dsh": {

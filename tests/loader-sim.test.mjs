@@ -7,7 +7,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 const here = dirname(fileURLToPath(import.meta.url));
 const pluginDir = join(here, "..", "plugins", "dsh-screenshot");
 const clientPath = join(pluginDir, "lib", "client.js");
-const manifestPath = join(pluginDir, "package.json");
+const manifestPath = join(pluginDir, "..", "..", "package.json");
 
 function fakeReact() {
 	return {
@@ -108,7 +108,7 @@ test("manifest declares the client half the host scan needs", async () => {
 	assert.ok(manifest.dsh.client.inject.includes("@deepseek-ai/dsh-client-ui-commands"));
 	const clientExport = manifest.exports["./client"];
 	assert.equal(typeof clientExport, "string");
-	assert.ok(existsSync(join(pluginDir, clientExport)), "exports[./client] must resolve to a real file");
+	assert.ok(existsSync(join(dirname(manifestPath), clientExport)), "exports[./client] must resolve to a real file");
 	const source = readFileSync(clientPath, "utf8");
 	assert.match(source, /id:\s*"dsh-screenshot"/, "the factory id must equal the package name (graph row identity)");
 });
