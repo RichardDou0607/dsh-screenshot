@@ -1,0 +1,8 @@
+# dsh-screenshot 组合包补丁。
+#
+# Harness 的「设置 → 插件 → 添加插件」按组合包（dsh.bundle）识别可安装插件：
+# 安装后本文件作为一层 profile 补丁被应用，下面这行把插件本体挂进 host loader。
+# name 用包名而不是绝对路径，因此换机器、换安装位置都不需要改。
+- insert:
+    - id: dsh-screenshot
+      name: 'dsh-screenshot'

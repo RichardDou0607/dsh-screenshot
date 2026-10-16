@@ -36,9 +36,23 @@ tests/loader-sim.test.mjs（客户端 20 项）、tests/host-route.test.mjs（�
 
 ## 安装与生效
 
-    bash scripts/mount.sh          # 在仓库根目录执行
+### 方式 A：Harness 插件管理器（推荐）
 
-脚本会备份 ~/.dsh/profiles/desktop/cordis.patch.yml，并写入带标记的插入块：
+仓库根声明了组合包（`dsh.bundle`）与浏览器半份（`dsh.client`），所以能走 Harness 自带的安装流程：
+
+1. **设置 → 插件 → 添加插件**；
+2. 「包名或地址」填 `https://github.com/RichardDou0607/dsh-screenshot`（或 `github:RichardDou0607/dsh-screenshot`）；
+3. 安装完成后启用；菜单里没出现「截图」就重启一次 Harness；
+4. **设置 → 插件列表** 里可查看状态、启停与卸载。
+
+本地开发改填本机绝对路径，会以软链安装、改代码即时生效。
+
+### 方式 B：手动挂载
+
+    bash scripts/mount.sh          # 在仓库根目录执行：备份并写入 profile 补丁层
+    bash scripts/unmount.sh        # 移除
+
+补丁层条目形如：
 
     # >>> dsh-screenshot plugin >>>
     - insert:
@@ -46,13 +60,8 @@ tests/loader-sim.test.mjs（客户端 20 项）、tests/host-route.test.mjs（�
           name: '<仓库绝对路径>/plugins/dsh-screenshot/lib/entry.js'
     # <<< dsh-screenshot plugin <<<
 
-**生效方式：无需重启应用。** dsh-hmr 用 chokidar 实时监听 cordis.patch.yml，写入后约 1 秒
-内热挂载宿主半份；客户端半份通过 SSE 图变更 + 页面刷新加载。所以流程是：
-
-1. 执行 mount.sh（宿主半份自动激活，检查 .host-loaded.json 是否出现）；
-2. 刷新页面（Cmd+R）——客户端半份与原生能力探测都会重新加载。
-
-宿主半份只在进程启动时读一次的东西不存在，唯一注意点见下面「条目 id」一节。
+**生效方式：无需重启。** dsh-hmr 实时监听 cordis.patch.yml，写入后约 1 秒内热挂载宿主半份；
+客户端半份刷新页面（Cmd+R）后加载。两种安装方式不要同时使用。
 
 ## 使用
 

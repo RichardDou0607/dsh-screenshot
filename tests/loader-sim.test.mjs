@@ -508,3 +508,19 @@ test("the hide labels exist in both dictionaries", async () => {
 		}
 	}
 });
+
+test("the package declares the bundle the plugin manager requires", async () => {
+	const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+	const bundle = manifest.dsh === undefined ? undefined : manifest.dsh.bundle;
+	assert.ok(bundle !== undefined, "the installer refuses packages without dsh.bundle");
+	assert.equal(typeof bundle.patch, "string");
+	const packageRoot = dirname(manifestPath);
+	const patchPath = join(packageRoot, bundle.patch);
+	assert.ok(existsSync(patchPath), "dsh.bundle.patch must exist: " + bundle.patch);
+	const patch = readFileSync(patchPath, "utf8");
+	assert.match(patch, /- insert:/, "the bundle patch must insert loader rows");
+	assert.match(patch, new RegExp("name: '" + manifest.name + "'"), "the bundle patch must mount this package by name");
+	assert.match(patch, /id: [\w-]+/);
+	assert.ok(existsSync(join(packageRoot, manifest.main)), "main must resolve");
+	assert.ok(existsSync(join(packageRoot, manifest.exports["./client"])), "exports[./client] must resolve");
+});

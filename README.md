@@ -37,36 +37,24 @@
 
 ## 安装
 
-    bash scripts/mount.sh          # 备份并写入 ~/.dsh/profiles/desktop/cordis.patch.yml
-    # 生效：host 侧由 dsh-hmr 热挂载（约 1 秒）；页面刷新（Cmd+R）加载客户端半份
+### 方式 A：Harness 插件管理器（推荐）
 
-自检：
+仓库根就是插件包（声明了 `dsh.bundle` 组合包 + `dsh.client` 浏览器半份），可直接被 Harness 的插件安装器识别：
 
-    bash scripts/verify.sh
-    curl -s http://127.0.0.1:19387/dsh-screenshot/status
-    # {"ok":true,"native":true,"hide":true,"platform":"darwin","tool":"/usr/sbin/screencapture"}
+1. 打开 **设置 → 插件 → 「添加插件」**；
+2. 在「包名或地址」里填本仓库地址：`https://github.com/RichardDou0607/dsh-screenshot`
+   （等价的简写：`github:RichardDou0607/dsh-screenshot`）；
+3. 点「安装」，完成后按提示启用；若菜单里还没出现「截图」，重启一次 Harness；
+4. 之后在 **设置 → 插件列表** 中可以看到它的运行状态，并随时启停 / 卸载。
 
-卸载：
+本地开发时，第 2 步改填本机仓库的绝对路径（例如 `/Users/you/dsh-screenshot`），会用软链方式安装，改代码即时生效。
 
-    bash scripts/unmount.sh
+### 方式 B：手动挂载（不经过插件管理器）
 
-## 网络与加速（可选）
+    bash scripts/mount.sh      # 备份并写入 ~/.dsh/profiles/desktop/cordis.patch.yml（幂等）
+    bash scripts/unmount.sh    # 移除该条目
 
-插件本身不联网。只有在克隆/推送本仓库、或 Harness 内使用 GitHub 相关能力时，才可能需要网络加速。
-
-Watt Toolkit（原 Steam++）的 GitHub 加速采用「hosts 指向 127.0.0.1 + 本地 80/443 反代」，
-**不是 HTTP 代理模式**，因此不需要给 git 配置 http.proxy，直连即可走加速：
-
-    git ls-remote origin          # 加速开启后应当立即返回
-
-反过来，若曾为 GitHub 配过 HTTP 代理（例如 Clash 的 127.0.0.1:7897），该配置会让 git **绕开** hosts 加速，
-代理没开时直接失败，建议移除：
-
-    git config --global --unset http.https://github.com/.proxy
-    git config --global --unset http.https://gist.github.com/.proxy
-
-另外注意：Node 不读取 macOS 钥匙串的根证书，在 hosts 劫持下 Node 发起的抓取可能报
-证书错误（UNABLE_TO_VERIFY_LEAF_SIGNATURE），可用 NODE_EXTRA_CA_CERTS 指向加速工具的根证书解决。
+两种方式**不要同时使用**（会对同一个插件挂载两次）。方式 B 适合不想让插件进入 profile 依赖表的场景。
 
 ## 实现要点
 

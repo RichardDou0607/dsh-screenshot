@@ -8,9 +8,13 @@
   "exports": {
     ".": "./plugins/dsh-screenshot/lib/entry.js",
     "./client": "./plugins/dsh-screenshot/lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
   "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
     "client": {
       "platform": "web",
       "inject": [
